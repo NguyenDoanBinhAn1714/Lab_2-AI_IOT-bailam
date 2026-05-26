@@ -1,4 +1,12 @@
+%%writefile README.md
 # LAB 2 - AIoT Data Preparation + Baseline Model + Deploy Demo
+
+**Thông tin thực hiện:**
+- Sinh viên: Nguyễn Doãn Bình An
+- Khóa: Sinh viên năm 3 - Đại học Đại Nam
+- Lĩnh vực: AI, IoT, Cybersecurity & B.A
+
+---
 
 Dự án này là bài mẫu hướng dẫn quy trình chuẩn bị dữ liệu AIoT (AIoT Data Preparation), xây dựng mô hình phân loại nền tảng (Baseline Model), và triển khai mô hình dưới dạng dịch vụ API (Deploy Demo) bằng FastAPI.
 
@@ -16,57 +24,80 @@ Dữ liệu thô (Telemetry)
   ──> Động cơ đưa ra quyết định & Gợi ý lệnh điều khiển (Decision Engine & Command Hint)
   ──> Xuất kết quả nhật ký (decision_log.csv) & Lưu mô hình (occupancy_baseline.joblib)
   ──> Triển khai mô hình dưới dạng API Service (FastAPI Deployment)
+##2. Cấu Trúc Thư Mục Dự Án
+Plaintext
 lab2_aiot_public_dataset_deploy/
 ├── data/
 │   ├── DATA_SOURCES.md
-│   ├── telemetry_clean.csv                     # Dữ liệu IoT đã làm sạch
-│   ├── feature_dataset.csv                     # Bộ dữ liệu đặc trưng phục vụ train/test
-│   └── occupancy_fallback_same_schema.csv      # Dữ liệu dự phòng khi mất kết nối mạng
+│   ├── telemetry_clean.csv                     
+│   ├── feature_dataset.csv                     
+│   └── occupancy_fallback_same_schema.csv      
 ├── notebooks/
-│   └── 01_data_prep_baseline_deploy_ready.ipynb # Notebook thực nghiệm và phân tích dữ liệu
+│   └── 01_data_prep_baseline_deploy_ready.ipynb
 ├── src/
 │   ├── __init__.py
-│   ├── data_utils.py                           # Các hàm xử lý dữ liệu, train mô hình, tính toán logic
-│   ├── download_data.py                        # Script tải public dataset hoặc khởi tạo dữ liệu dự phòng
-│   ├── run_training_pipeline.py                # Pipeline thực thi tự động không qua giao diện notebook
-│   ├── app.py                                  # Ứng dụng FastAPI để phục vụ mô hình (Inference Service)
-│   ├── test_api.py                             # Script tự động kiểm thử hiệu năng và độ chính xác của API
-│   └── check_outputs.py                        # Công cụ kiểm tra tính toàn vẹn của kết quả đầu ra
+│   ├── data_utils.py                           
+│   ├── download_data.py                        
+│   ├── run_training_pipeline.py                
+│   ├── app.py                                  
+│   ├── test_api.py                             
+│   └── check_outputs.py                        
 ├── models/
-│   └── occupancy_baseline.joblib               # Tệp lưu trữ mô hình sau khi huấn luyện thành công
+│   └── occupancy_baseline.joblib               
 ├── outputs/
-│   ├── metrics.json                            # Các chỉ số đánh giá (Accuracy, Precision, Recall, F1)
-│   ├── decision_log.csv                        # Nhật ký quyết định chi tiết từ mô hình và động cơ Z-score
-│   └── figures/                                # Các biểu đồ trực quan hóa dữ liệu và đánh giá
-│       ├── 01_co2_time_series.png
-│       ├── 02_confusion_matrix.png
-│       └── 03_occupancy_probability.png
-└── requirements.txt                            # Danh sách thư viện Python phụ thuộc
-# Tạo môi trường ảo
+│   ├── metrics.json                            
+│   ├── decision_log.csv                        
+│   └── figures/                                
+└── requirements.txt                            
+##3. Khởi Tạo Môi Trường Hệ Thống
+Yêu cầu hệ thống cài đặt sẵn Python >= 3.8.
+
+Trên Windows (PowerShell)
+PowerShell
 python -m venv .venv
-
-# Kích hoạt môi trường ảo
 .\.venv\Scripts\Activate.ps1
-
-# Cập nhật pip và cài đặt thư viện phụ thuộc
 python -m pip install --upgrade pip
 pip install -r requirements.txt
-# Tạo môi trường ảo
+Trên macOS / Linux
+Bash
 python3 -m venv .venv
-
-# Kích hoạt môi trường ảo
 source .venv/bin/activate
-
-# Cập nhật pip và cài đặt thư viện phụ thuộc
 python -m pip install --upgrade pip
 pip install -r requirements.txt
-
+##4. Quy Trình Thực Thi Dự Án
+Cách 1: Chạy bằng Jupyter Notebook (Thực nghiệm)
+Bash
 jupyter lab
+Mở tệp notebooks/01_data_prep_baseline_deploy_ready.ipynb và chọn Run -> Run All Cells.
 
+Cách 2: Chạy nhanh qua Giao diện Dòng lệnh (CLI Pipeline)
+Bash
 python src/run_training_pipeline.py
-
 python src/check_outputs.py
-
+##5. Triển Khai và Kiểm Thử API Mô Hình (Deployment & Testing)
+Bước 1: Khởi động API Server
+Bash
 uvicorn src.app:app --reload --host 127.0.0.1 --port 8000
+Bước 2: Truy cập Giao diện Tài liệu (Swagger UI)
+Mở trình duyệt web: http://127.0.0.1:8000/docs
 
+Bước 3: Chạy Script Kiểm thử Tự động
+Bash
 python src/test_api.py
+##6. Tiêu Chí Đánh Giá Hoàn Thành (Definition of Done)
+Thực thi không lỗi: Notebook hoặc Pipeline CLI chạy mượt mà từ đầu đến cuối.
+
+Mô hình học máy: Tệp models/occupancy_baseline.joblib được khởi tạo.
+
+Chỉ số đánh giá: Có tệp outputs/metrics.json chứa accuracy, precision, recall, f1.
+
+Nhật ký quyết định: Tệp outputs/decision_log.csv chứa occupancy_probability, anomaly_score, is_anomaly, decision, command_hint.
+
+Khởi chạy Server: Dịch vụ FastAPI khởi chạy cục bộ và truy cập được vào /docs.
+
+Kiểm thử API thành công: Chạy test_api.py trả về trạng thái PASSED.
+
+Hiểu rõ luồng xử lý: Nắm vững chuyển đổi: Telemetry -> Features -> Model Predictive -> Decision -> Command Hint.
+
+
+Từ "kf" ở cuối câu hỏi của bạn có phải là do gõ nhầm chữ "không", hay bạn muốn thay đổi/rút gọn một
